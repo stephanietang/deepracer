@@ -18,7 +18,7 @@
 | s09 <br> s09-1 | 240 <br> 240 | reward_function_minimalist.py | ir=0.0002 |  28.144s | 2 |  43% 75% |
 | s10 | 240 | reward_function_minimalist_speed.py | ir=0.0002 | 2 mins plus | 41 | discarded, there is a bug in this reward function  |
 | s11 | 180 | reward_function_speed.py | default | 38.899s | 7 | space action used in TIF, change DEEP to SHALLOW(default) |
-| s12 <br> s12-1 <br> s12-1 | 180<br>180<br>180 | reward_function_angle.py | default |  27.545s | 1 | action space used in TIF, stable model, average 75%, max 100%, min time during training is 22.643s | 
+| **s12 <br> s12-1 <br> s12-1** | 180<br>180<br>180 | reward_function_angle.py | default |  27.545s | 1 | action space used in TIF, stable model, average 75%, max 100%, min time during training is 22.581s | 
 | s13 | 180 | reward_function_angle2.py | default |  27.873s | 1 | |
 | s14 | 180 | reward_function_minimalist.py | default |  36.953s | 5 | |
 | s15 | 180 | reward_function_steps_progress.py | default |  46.743s | 10 | |
