@@ -18,7 +18,7 @@
 | s09 <br> s09-1 | 240 <br> 240 | reward_function_minimalist.py | ir=0.0002 |  28.144s | 2 |  43% 75% |
 | s10 | 240 | reward_function_minimalist_speed.py | ir=0.0002 | 2 mins plus | 41 | discarded, there is a bug in this reward function  |
 | s11 | 180 | reward_function_speed.py | default | 38.899s | 7 | space action used in TIF, change DEEP to SHALLOW(default) |
-| **s12 <br> s12-1 <br> s12-1** | 180<br>180<br>180 | reward_function_angle.py | default |  27.545s | 1 | action space used in TIF, stable model, average 75%, max 100%, min time during training is 22.581s | 
+| **s12 <br> s12-1 <br> s12-1** | 180<br>180<br>180 | reward_function_angle.py | default |  27.545s | 1 | action space used in TIF, stable model, average 75%, max 100%, min time during training is 22.581s, it is able to finish the laps without off track | 
 | s13 | 180 | reward_function_angle2.py | default |  27.873s | 1 | |
 | s14 | 180 | reward_function_minimalist.py | default |  36.953s | 5 | |
 | s15 | 180 | reward_function_steps_progress.py | default |  46.743s | 10 | |
@@ -35,6 +35,7 @@
 | s26 | 120 | reward_function_optimal_trace2.py | default |   |  | trained on top of s23, but the progress is still very small, average progress: 14 max progress: 49 |
 | s27<br>s27-1 | 240<br>240 | TIF reward function | TIF hp |   |  | 37% 79% |
 | s28<br>s28-1 | 240<br>240 | reward_function_speed.py | TIF hp |   |  | retrain s07 to see if the model performance is stable 40% 75% |
+| s29 | 180 | reward_function_angle.py | default |   |  | use model_metadata_optimal_max_5_min_2.json |
 
 
 ## How to Run the scripts
@@ -63,6 +64,7 @@
     - https://github.com/scottpletcher/deepracer/tree/master/iterations
     - https://medium.com/@ajrberezowski/results-and-lessons-deepracer-student-league-march-2023-52c79121c3bb
     - https://medium.com/twodigits/aws-deepracer-how-to-train-a-model-in-15-minutes-3a0dca1175fb
+    - https://github.com/Usin2705/DeepRacer
 - understand the parameters in reward function
     - https://github.com/dmh23/deep_racer_framework
 - An advanced Guide to AWS DeepRacer https://towardsdatascience.com/an-advanced-guide-to-aws-deepracer-2b462c37eea
