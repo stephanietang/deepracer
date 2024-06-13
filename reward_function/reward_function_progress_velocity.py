@@ -1,17 +1,16 @@
 # -*- coding: utf-8 -*-
 """
 AWS DeepRacer reward function
-link: https://github.com/Usin2705/DeepRacer/blob/master/2019/05-ProgressVelocity-08.610.py
+link: https://github.com/Usin2705/DeepRacer/blob/master/ProgressVelocity.py
 """
 
 class MyCar:
     def __init__ (self, debug = False):
-        self.previous_steps = None
         self.pre_progress = 0
         self.pre_progress2 = 0    
         self.debug = debug
    
-    def reward_function(self, params):
+    def reward_function(self, params):    
         
         # Read input parameters
         progress = params['progress']
@@ -32,7 +31,7 @@ class MyCar:
         # just reward car if they start with higher speed
         MINIMUM_SPEEDING_STEPS = 4
         MINIMUM_SPEED = 3
-        if (steps <= MINIMUM_SPEEDING_STEPS) and (speed>= MINIMUM_SPEED):
+        if (steps <= MINIMUM_SPEEDING_STEPS) and (speed >= MINIMUM_SPEED):
             reward = 2
         else:
             reward = 1e-4
@@ -59,11 +58,8 @@ class MyCar:
             
         # Avoid negative reward
         if (reward <= 0):
-            reward = 1e-4   
+            reward = 1e-4
         
-        self.pre_progress2 = self.pre_progress
-        self.pre_progress = progress        
-        self.previous_steps = steps
         if self.debug:
             # Print the parameter out to console (so we can see it in local training)                
             carString=('REWARD: {:3.1f}, PRO: {:5.2f}, PRE_PRO: {:5.2f}, '
@@ -74,6 +70,10 @@ class MyCar:
                    speed, is_left_of_center, normDistance, 
                    distance_from_center, track_width))
             print(carString)
+        
+        self.pre_progress2 = self.pre_progress
+        self.pre_progress = progress
+        
         return float(reward)
 
 myCarObject = MyCar(True)
