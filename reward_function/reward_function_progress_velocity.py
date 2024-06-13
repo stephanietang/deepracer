@@ -66,17 +66,17 @@ class MyCar:
         self.previous_steps = steps
         if self.debug:
             # Print the parameter out to console (so we can see it in local training)                
-            carString=('REW: {:3.1f}, PRO: {:5.2f}, PRE_PRO: {:5.2f}, '
+            carString=('REWARD: {:3.1f}, PRO: {:5.2f}, PRE_PRO: {:5.2f}, '
                    'PRE_PRO2: {:5.2f}, STEER:{:5.1f}, SPEED: {:3.1f}, '
                    'IS_LEFT: {}, NORMDIST: {:.2f}, DISTANCE: {:.2f}, '
-                   ' TRACK_WIDTH: {:.2f}, reward: {:.2f}'.format(reward, progress, 
+                   ' TRACK_WIDTH: {:.2f}'.format(reward, progress, 
                    self.pre_progress, self.pre_progress2, steering_angle, 
                    speed, is_left_of_center, normDistance, 
-                   distance_from_center, track_width, reward))
+                   distance_from_center, track_width))
             print(carString)
         return float(reward)
 
 myCarObject = MyCar(True)
         
 def reward_function(params):
-    return myCarObject.reward_function(params)    
+    return myCarObject.reward_function(params)

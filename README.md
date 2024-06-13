@@ -36,6 +36,8 @@
 | s27<br>s27-1 | 240<br>240 | TIF reward function | TIF hp |   |  | 37% 79% |
 | s28<br>s28-1 | 240<br>240 | reward_function_speed.py | TIF hp |   |  | retrain s07 to see if the model performance is stable 40% 75% |
 | s29 | 180 | reward_function_angle.py | default |   |  | use model_metadata_optimal_max_5_min_2.json |
+| s30 | 120 | reward_function_progress_velocity.py | default |   |  | use model_metadata_7_AS.json |
+
 
 
 ## How to Run the scripts
