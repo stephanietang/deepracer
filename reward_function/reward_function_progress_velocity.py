@@ -22,15 +22,15 @@ class MyCar:
 
         reward = 0
 
-        straight_line_reward = self.encourage_go_straight_on_straight_lines_and_speed(
-            steering_angle, closest_waypoints, speed)
-
-        reward += straight_line_reward
-
         progress_reward = self.get_progress_reward(
             steps, speed, progress, is_offtrack, is_crashed)
 
         reward += progress_reward
+
+        straight_line_reward = self.encourage_go_straight_on_straight_lines_and_speed(
+            steering_angle, closest_waypoints, speed)
+
+        reward *= straight_line_reward
 
         # punishment on offtrack
         if is_offtrack or is_crashed:
@@ -38,11 +38,11 @@ class MyCar:
 
         # Avoid negative reward
         if (reward <= 0):
-            reward = 1e-4
+            reward = 1e-3
 
         if self.debug:
             # Print the parameter out to console (so we can see it in local training)
-            carString = ('REWARD: {:3.1f}, STR_REW: {:5.2f}, PRO_REW: {:5.2f}, PRO: {:5.2f}, PRE_PRO: {:5.2f}, '
+            carString = ('REWARD: {:3.4f}, STR_REW: {:5.4f}, PRO_REW: {:5.4f}, PRO: {:5.2f}, PRE_PRO: {:5.2f}, '
                          'PRE_PRO2: {:5.2f}, STEER:{:5.1f}, SPEED: {:3.1f}, '
                          'IS_LEFT: {}, NORMDIST: {:.2f}, DISTANCE: {:.2f}, '
                          ' TRACK_WIDTH: {:.2f}'.format(reward, straight_line_reward, progress_reward, progress,
@@ -62,9 +62,9 @@ class MyCar:
         # print(straight_line_waypoints)
         closest_waypoint = closest_waypoints[1]
         STANDARD_REWARD = 1
-        BAD_REWARD = 1e-4
+        BAD_REWARD = 1e-3
         if closest_waypoint in straight_line_waypoints:
-            MIN_SPEED = 1.5
+            MIN_SPEED = 2.0
             ABS_STEERING_THRESHOLD = 5
             if abs(steering_angle) > ABS_STEERING_THRESHOLD:
                 return BAD_REWARD

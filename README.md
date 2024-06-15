@@ -37,7 +37,7 @@
 | s28<br>s28-1 | 240<br>240 | reward_function_speed.py | TIF hp |   |  | retrain s07 to see if the model performance is stable 40% 75% |
 | s29 | 180 | reward_function_angle.py | default |   |  | use model_metadata_optimal_max_5_min_2.json |
 | s30<br>s30-1<br>s30-2 | 120<br>120<br>480 | reward_function_progress_velocity.py | default |   |  | use model_metadata_7_AS.json failed at s30-2 too long time|
-| s31 | 120 | my version of reward_function_progress_velocity.py | default |   |  | use model_metadata_optimal_max_4_min_2.json |
+| s31<br>s31-1 | 120<br>120 | my version of reward_function_progress_velocity.py | default |   |  | use model_metadata_optimal_max_4_min_2.json |
 
 
 
@@ -72,6 +72,7 @@
 - understand the parameters in reward function
     - https://github.com/dmh23/deep_racer_framework
 - An advanced Guide to AWS DeepRacer https://towardsdatascience.com/an-advanced-guide-to-aws-deepracer-2b462c37eea
+- Breaking in to the Top 10 of AWS Deepracer Competition - May 2020 https://mickqg.github.io/DeepracerBlog/part2.html
 - AWS DeepRacer event for EPAM: my approach to taking the 4th place https://medium.com/@rostyslav.myronenko/aws-deepracer-event-for-epam-my-approach-for-taking-the-4th-place-ff3f76f39b1e
 - How we broke into the top 1% of the AWS DeepRacer Virtual Circuit https://blog.gofynd.com/how-we-broke-into-the-top-1-of-the-aws-deepracer-virtual-circuit-573ba46c275
 - Craft a Powerful Reward Function for AWS DeepRacer Student League https://medium.com/@anshml/
