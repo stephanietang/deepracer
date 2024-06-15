@@ -36,7 +36,7 @@
 | s27<br>s27-1 | 240<br>240 | TIF reward function | TIF hp |   |  | 37% 79% |
 | s28<br>s28-1 | 240<br>240 | reward_function_speed.py | TIF hp |   |  | retrain s07 to see if the model performance is stable 40% 75% |
 | s29 | 180 | reward_function_angle.py | default |   |  | use model_metadata_optimal_max_5_min_2.json |
-| s30 | 120 | reward_function_progress_velocity.py | default |   |  | use model_metadata_7_AS.json |
+| s30<br>s30-1<br>s30-2 | 120<br>120<br>480 | reward_function_progress_velocity.py | default |   |  | use model_metadata_7_AS.json |
 
 
 
@@ -54,6 +54,7 @@
         - https://aws.amazon.com/cn/blogs/machine-learning/using-log-analysis-to-drive-experiments-and-win-the-aws-deepracer-f1-proam-race/
     - hyper paramerters: 
         * https://medium.com/analytics-vidhya/aws-deepracer-looking-under-the-hood-for-design-of-the-reward-function-and-adjusting-e9dd3805ebbf
+        * https://docs.aws.amazon.com/deepracer/latest/developerguide/deepracer-console-train-evaluate-models.html#deepracer-define-action-space-for-training
         * https://catalog.workshops.aws/deepracer-200l/en-US/04-improving-your-aws-deepracer-model/01-hyperparameters
     - https://refactored.ai/microcourse/notebook?path=content%2FDeepRacer%2FAWS_DeepRacer_Reward_function_Additional_material.ipynb
     - https://www.linkedin.com/pulse/aws-deepracer-my-journey-from-17-seconds-95-dante-chen/
