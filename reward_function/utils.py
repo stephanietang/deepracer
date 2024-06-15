@@ -4,7 +4,8 @@ import pandas as pd
 def reward_function(params):
 
     # Actual reward function go here
-    from reward_function_progress_velocity import reward_function
+    # from reward_function_progress_velocity import reward_function
+    from reward_function_optimal_trace5 import reward_function
     reward = reward_function(params)
     return float(reward)
 
@@ -216,7 +217,7 @@ def get_test_params():
               'heading': 88.43765807467159, 'distance_from_center': 0.0017573151666297755,
               'projection_distance': 7.058494216287594, 'progress': 0.30350672421458336, 'steps': 2.0, 'speed': 3.9795,
               'steering_angle': -0.5551, 'track_width': 1.0667786098174583, 'track_length': 46.12337775575979,
-              'waypoints': [], 'closest_waypoints': [110, 111], 'is_left_of_center': False, 'is_reversed': False,
+              'waypoints': [], 'closest_waypoints': [23, 24], 'is_left_of_center': False, 'is_reversed': False,
               'closest_objects': [0, 0], 'objects_location': [], 'objects_left_of_center': [],
               'object_in_camera': False, 'objects_speed': [], 'objects_heading': [], 'objects_distance_from_center': [],
               'objects_distance': [], 'is_crashed': False, 'is_offtrack': False}

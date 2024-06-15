@@ -1,3 +1,7 @@
+# There is a bug with this version, because steps is always >= 0, when steps=1(prepare status)
+# if steps == 1:
+#       self.first_racingpoint_index = closest_index
+#
 import math
 
 
