@@ -18,7 +18,7 @@
 | s09 <br> s09-1 | 240 <br> 240 | reward_function_minimalist.py | lr=0.0002 |  28.144s | 2 |  43% 75% |
 | s10 | 240 | reward_function_minimalist_speed.py | lr=0.0002 | 2 mins plus | 41 | discarded, there is a bug in this reward function  |
 | s11 | 180 | reward_function_speed.py | default | 38.899s | 7 | space action used in TIF, change DEEP to SHALLOW(default) 22.5%|
-| **s12 <br> s12-1 <br> s12-2** | 180<br>180<br>180 | reward_function_angle.py | default |  27.545s | 1 | action space used in TIF, stable model, average 75%, max 100%, min time during training is 22.581s, it is able to finish the laps without off track | 
+| **s12 <br> s12-1 <br> s12-2<br> s12-3<br> s1204** | 180<br>180<br>180<br>180<br>120 | reward_function_angle.py | default |  27.545s | 1 | action space used in TIF, stable model, average 75%, max 100%, min time during training is 22.581s, it is able to finish the laps without off track | 
 | s13 | 180 | reward_function_angle2.py | default |  27.873s | 1 | 20% |
 | s14 | 180 | reward_function_minimalist.py | default |  36.953s | 5 | 12% |
 | s15 | 180 | reward_function_steps_progress.py | default |  46.743s | 10 |20% |
@@ -37,7 +37,12 @@
 | **s28<br>s28-1** | 240<br>240 | reward_function_speed.py | TIF hp |   |  | retrain s07 to see if the model performance is stable 36% 90% |
 | s29 | 180 | reward_function_angle.py | default |   |  | use model_metadata_optimal_max_5_min_2.json |
 | s30<br>s30-1<br>s30-2 | 120<br>120<br>480 | reward_function_progress_velocity.py | default |   |  | use model_metadata_7_AS.json failed at s30-2 too long time, discarded, 16%, 50%|
-| s31<br>s31-1 | 120<br>120 | my version of reward_function_progress_velocity.py | default |   |  | use model_metadata_optimal_max_4_min_2.json |
+| s31<br>s31-1<br>s31-2<br>s31-3 | 120<br>120<br>120<br>120 | my version of reward_function_progress_velocity.py | default |   |  | use model_metadata_optimal_max_4_min_2.json |
+| s32<br>s32-1<br>s3202 | 30<br>120<br>120 | reward_function_optimal_trace5.py | default |   |  | use model_metadata_optimal_max_4_min_2.json |
+
+s1204
+s3104
+s3203
 
 ## Analysis on Reward Function
 
