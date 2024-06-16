@@ -9,9 +9,6 @@ matched_dirs=($(ls -d $dir_pattern))
 if [ ${#matched_dirs[@]} -eq 0 ]; then
     echo "No matching directory found."
     exit 1
-elif [ ${#matched_dirs[@]} -gt 1 ]; then
-    echo "More than one matching directory found. Please handle manually."
-    exit 1
 fi
 
 # get matched dirs
@@ -31,9 +28,10 @@ do
     echo "Renaming directory '$original_dir' to '$new_dir'"
     mv "$original_dir" "$new_dir"
 
+    echo "goto directory $root_folder/$new_dir and update run.env"
     cd $root_folder/$new_dir
-    sed -i 's/DR_MODEL_PREFIX=$original_dir/DR_MODEL_PREFIX=$new_dir/g' run.env
-    sed -i 's/DR_LOCAL_S3_PRETRAINED_PREFIX=training\/\$DR_WORLD_NAME\/$older_dir/DR_LOCAL_S3_PRETRAINED_PREFIX=training\/\$DR_WORLD_NAME\/$original_dir/g' run.env
+    sed -i "s/$original_dir/$new_dir/g" run.env
+    sed -i 's/$older_dir/$original_dir/g' run.env
 
 done
 echo "complete."
