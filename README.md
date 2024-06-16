@@ -40,10 +40,6 @@
 | s31<br>s31-1<br>s31-2<br>s31-3 | 120<br>120<br>120<br>120 | my version of reward_function_progress_velocity.py | default |   |  | use model_metadata_optimal_max_4_min_2.json |
 | s32<br>s32-1<br>s3202 | 30<br>120<br>120 | reward_function_optimal_trace5.py | default |   |  | use model_metadata_optimal_max_4_min_2.json |
 
-s1204
-s3104
-s3203
-
 ## Analysis on Reward Function
 
 | Reward Function | Speed | Comment |
@@ -55,12 +51,15 @@ reward_function_angle|22s|relatively easy to train, fatest model so far|
 |reward_function_progress_velocity||hard to train|
 |reward_function_optimal_trace5||hardest to train|
 
-
-
 ## How to Run the scripts
 - Change the models config under ./models
 - change every time in run.env
     - `DR_LOCAL_S3_MODEL_PREFIX`
+- Run the following command: `./auto_run.sh <time in mins>`
+- It can trains multiple models at the same time if there are multiple models in ./models folder
+
+## How to re-train the same model based on last checkpoint
+- Run update.sh to update the models configuration under ./models, it will change `DR_LOCAL_S3_MODEL_PREFIX` and will point the pretrained model to last model name
 - Run the following command: `./auto_run.sh <time in mins>`
 
 ## Useful links:
