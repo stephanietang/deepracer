@@ -10,10 +10,10 @@ do
 	cd ~/deepracer-on-the-spot/
 	./create-spot-instance.sh steph-base $i $1
 	#./create-standard-instance.sh steph-base $i $1
-	if ((j>0)); then
+	if [ $j -gt 0 ]; then
 		echo "+ sleep for 5 mins"
 		sleep 600
 	fi
-	j=j+1
+	((j++))
 done
 echo "Completed"

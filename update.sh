@@ -2,7 +2,7 @@
 
 root_folder=~/models/
 cd $root_folder
-matched_dirs=($(ls -d s[0-9]*))
+matched_dirs=($(ls -d aug[0-9]*))
 
 # check if there is matched dirs
 if [ ${#matched_dirs[@]} -eq 0 ]; then
