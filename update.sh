@@ -2,7 +2,7 @@
 
 root_folder=~/models/
 cd $root_folder
-matched_dirs=($(ls -d s[0-9]*))
+matched_dirs=($(ls -d aug[0-9]*))
 
 # check if there is matched dirs
 if [ ${#matched_dirs[@]} -eq 0 ]; then
@@ -19,9 +19,9 @@ do
 
     # get the new number
     new_number=$((number_part + 1))
-    new_dir="s$new_number"
+    new_dir="aug$new_number"
     older_number=$((number_part - 1))
-    older_dir="s$older_number"
+    older_dir="aug$older_number"
     echo "+ new_dir: $new_dir, original_dir: $original_dir, older_dir: $older_dir"
 
     echo "+ Renaming directory '$original_dir' to '$new_dir'"
