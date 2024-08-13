@@ -11,7 +11,7 @@ class Reward:
         self.debug = debug
         self.intermediate_progress = [0]*11
         self.best_reward = 0 # best reward per episode
-        self.max_curvature = (0, 0, 0, 0)
+        self.max_curvature = (0, 0)
         self.all_optimal_speed_set = set()
         if output_log:
             # Configure the logger
@@ -47,7 +47,7 @@ class Reward:
         def dist_2_points(x1, x2, y1, y2):
             return abs(abs(x1-x2)**2 + abs(y1-y2)**2)**0.5
 
-        def closest_2_racing_points_index(racing_coords, car_coords):
+        def closest_racing_points_index(racing_coords, car_coords):
 
             # Calculate all distances to racing points
             distances = []
@@ -62,10 +62,11 @@ class Reward:
             # Get index of the second closest racing point
             distances_no_closest = distances.copy()
             distances_no_closest[closest_index] = 999
-            second_closest_index = distances_no_closest.index(
-                min(distances_no_closest))
-
-            return [closest_index, second_closest_index]
+            second_closest_index = distances_no_closest.index(min(distances_no_closest))
+            closest_points_index = [closest_index, second_closest_index]
+            if self.debug and self.verbose:
+                self.logger.info('closet_points_index: %s', closest_points_index)
+            return closest_points_index
 
         def dist_to_racing_line(closest_coords, second_closest_coords, car_coords):
 
@@ -132,8 +133,7 @@ class Reward:
                                                             heading)
 
             # Calculate the direction in radius, arctan2(dy, dx), the result is (-pi, pi) in radians
-            track_direction = math.atan2(
-                next_point[1] - prev_point[1], next_point[0] - prev_point[0])
+            track_direction = math.atan2(next_point[1] - prev_point[1], next_point[0] - prev_point[0])
 
             # Convert to degree
             track_direction = math.degrees(track_direction)
@@ -144,8 +144,8 @@ class Reward:
                 direction_diff = 360 - direction_diff
 
             if self.debug and self.verbose:
-                self.logger.info('track_diretion %s, heading %s, direction_diff %s', track_direction, heading, direction_diff)
-            return direction_diff
+                self.logger.info('track_direction %s, heading %s, direction_diff %s', track_direction, heading, direction_diff)
+            return direction_diff, track_direction
 
         # Gives back indexes that lie between start and end index of a cyclical list
         # (start index is included, end index is not)
@@ -165,12 +165,10 @@ class Reward:
             current_actual_time = (step_count-1) / 15
 
             # Calculate which indexes were already passed
-            indexes_traveled = indexes_cyclical(
-                first_index, closest_index, len(times_list))
+            indexes_traveled = indexes_cyclical( first_index, closest_index, len(times_list))
 
             # Calculate how much time should have passed if car would have followed optimals
-            current_expected_time = sum(
-                [times_list[i] for i in indexes_traveled])
+            current_expected_time = sum( [times_list[i] for i in indexes_traveled])
 
             # Calculate how long one entire lap takes if car follows optimals
             total_expected_time = sum(times_list)
@@ -274,7 +272,7 @@ class Reward:
                     next_points[i] -= len(waypoints)
             return next_points
 
-        def get_optimal_line(params):
+        def get_next_points(params):
             # Get current position
             # x = params['x']
             # y = params['y']
@@ -294,16 +292,19 @@ class Reward:
         
         def angle_between_points(first_point, second_point, third_point):
             """Calculates the angle between two line segments formed by three points."""
-            ab_x = first_point[0] - second_point[0]
-            ab_y = first_point[1] - second_point[1]
-            bc_x = second_point[0] - third_point[0]
-            bc_y = second_point[1] - third_point[1]
+            ab_x = second_point[0] - first_point[0]
+            ab_y = second_point[1] - first_point[1]
+            bc_x = third_point[0] - second_point[0]
+            bc_y = third_point[1] - second_point[1]
             angle = math.atan2(bc_y, bc_x) - math.atan2(ab_y, ab_x)
-            angle_in_degree = abs(math.degrees(angle))
-            if angle_in_degree > 180:
-                angle_in_degree = 360 - angle_in_degree
-            self.logger.info('angle %s, angle_in_degree %s', angle, angle_in_degree)
+            angle_in_degree = math.degrees(angle)
+            if self.debug and self.verbose:
+                self.logger.info('angle %s, angle_in_degree %s', angle, angle_in_degree)
             return angle_in_degree
+        
+
+        def get_racing_line_curvrature(first_point, second_point, third_point):
+            return angle_between_points(first_point, second_point, third_point)
 
         #################################################################
         ###      Below are the functions to calculate the rewards     ###
@@ -317,9 +318,10 @@ class Reward:
                 self.logger.info('dist %s, distance_reward %s', dist, distance_reward)
             return dist, distance_reward
 
+        #################################################################
         def get_direction_reward():
             # Zero reward if obviously wrong direction (e.g. spin)
-            direction_diff = racing_direction_diff(optimals[0:2], optimals_second[0:2], [x, y], heading)
+            direction_diff, track_direction = racing_direction_diff(optimals[0:2], optimals_second[0:2], [x, y], heading)
 
             STEERING_ANGLE_THRESHOLD = 30
             if direction_diff > STEERING_ANGLE_THRESHOLD:
@@ -336,7 +338,7 @@ class Reward:
             x = params['x']
             y = params['y']
 
-            next_points = get_optimal_line(params)
+            next_points = get_next_points(params)
             target_forward_wp = TARGET_WAYPOINT-1
             x_forward = waypoints[next_points[target_forward_wp]][0]
             y_forward = waypoints[next_points[target_forward_wp]][1]
@@ -354,36 +356,75 @@ class Reward:
                 self.logger.info('forward_point: %s, optimal_heading: %s, heading %s, final_reward %s', next_points[target_forward_wp], optimal_heading, heading, final_reward)
             return 0, final_reward
         
+        def get_closest_index(index1, index2):
+            index3 = max(index1, index2) + LOOK_FORWARD_STEPS
+            if index3 >= len(racing_track):
+                index3 = index3 - len(racing_track)
+            
+            self.logger.info('closest_index %s, second_closest_index %s, third index %s', index1, index2, index3)
+            if index2 > index1:
+                return [index1, index2, index3]
+            else:
+                return [index2, index1, index3]
+        
+        def get_direction_reward3():
+            # Zero reward if obviously wrong direction (e.g. spin)
+            direction_diff, track_direction = racing_direction_diff(optimals[0:2], optimals_second[0:2], [x, y], heading)
+
+            punish_weight = 1
+            good_move = True
+            if abs(race_line_curvature) > 10: # in the corner
+                if race_line_curvature < 0 and steering_angle >= 5: # turn left but steer right then not good move
+                    punish_weight = 2
+                    good_move = False
+                elif race_line_curvature > 0 and steering_angle <= -5: # turn right but steer left then not good move
+                    punish_weight = 2
+                    good_move = False
+
+            STEERING_ANGLE_THRESHOLD = 30
+            if direction_diff > STEERING_ANGLE_THRESHOLD:
+                reward = 1e-3
+            else:
+                reward = max(1.0 - direction_diff / STEERING_ANGLE_THRESHOLD * punish_weight, 1e-3)
+            if self.debug and self.verbose:
+                self.logger.info('direction_diff %s, direction_reward %s, curvature %s, steering_angle %s, good move? %s, punish_weight %s', direction_diff, reward, race_line_curvature, 
+                                 steering_angle, good_move, punish_weight)
+            return direction_diff, reward
+        
+        #################################################################
         def get_speed_reward():
             SPEED_DIFF_NO_REWARD = 1
             speed_diff = abs(optimals[2]-speed)
             if speed_diff <= SPEED_DIFF_NO_REWARD:
                 # we use quadratic punishment (not linear) bc we're not as confident with the optimal speed
                 # so, we do not punish small deviations from optimal speed
-                speed_reward = (1 - (speed_diff/(SPEED_DIFF_NO_REWARD))**2)**2
+                speed_reward = math.exp(-1.5 * speed_diff)
+                # speed_reward = (1 - (speed_diff/(SPEED_DIFF_NO_REWARD))**2)**2
             else:
                 speed_reward = 1e-3
             if self.debug and self.verbose:
                 self.logger.info('speed %s, speed_diff %s, speed_reward %s', speed, speed_diff, speed_reward)
             return speed_diff, speed_reward
-        
+
         def get_speed_reward2():
-            next_points = get_optimal_line(params)
-            waypoints = params['waypoints']
+            ## according to the track shape
             speed = params['speed']
+            waypoints = params['waypoints']
+            next_points = get_next_points(params)
             first_point_wp = next_points[0]
             second_point_wp = next_points[1]
             third_point_wp = next_points[6]
             first_point = waypoints[first_point_wp]
-            second_point = waypoints[second_point_wp]
-            third_point = waypoints[third_point_wp]
-            curvature = abs(angle_between_points(first_point, second_point, third_point))
+            second_point = waypoints[second_point]
+            thrid_point = waypoints[thrid_point]
+            curvature = get_racing_line_curvrature(first_point, second_point, thrid_point)
+            abs_curvature = abs(curvature)
 
             # Optimal speed based on curvature
             min_speed, max_speed = 1.5, 4
-            MAX_CURVATURE = 68 # based on the shape of the track
+            MAX_CURVATURE = 50 # based on the shape of the track
             # Changed to continuous function for optimal speed calculation
-            optimal_speed = round(max_speed - (curvature / MAX_CURVATURE) * (max_speed - min_speed), 1)
+            optimal_speed = round(max_speed - (abs_curvature / MAX_CURVATURE) * (max_speed - min_speed), 1)
             self.all_optimal_speed_set.add(optimal_speed)
 
             # Calculate reward for speed
@@ -394,11 +435,42 @@ class Reward:
             if self.debug and self.verbose:
                 self.logger.info('curvature %s, (%s, %s, %s), optimal_speed %s, speed %s', curvature, first_point_wp, second_point_wp, third_point_wp, optimal_speed, speed)
             max_curvature, _, _, _ = self.max_curvature
-            if curvature > max_curvature:
-                self.max_curvature = (curvature, first_point_wp, second_point_wp, third_point_wp)
+            if abs_curvature > max_curvature:
+                self.max_curvature = (abs_curvature, first_point_wp, second_point_wp, third_point_wp)
             return speed_diff, reward_speed
         
         def get_speed_reward3():
+            ## according to the best racing line shape
+            abs_curvature = abs(race_line_curvature)
+            if abs_curvature > 180:
+                abs_curvature = 360 - abs_curvature
+            if abs_curvature > 90:
+                abs_curvature = 180 - abs_curvature
+            next_points = get_next_points(params)
+
+            # Optimal speed based on curvature
+            min_speed, max_speed = 1.5, 4
+            MAX_CURVATURE = 50 # based on the shape of the track
+            punish_score = abs_curvature / MAX_CURVATURE
+            if abs_curvature >= 50: # 60 degrees is already a big curve
+                punish_score = 1 # if it is already too much, then will reduced to the lowest speed as possible
+            # Changed to continuous function for optimal speed calculation
+            optimal_speed = round(max_speed - punish_score * (max_speed - min_speed), 1)
+            self.all_optimal_speed_set.add(optimal_speed)
+
+            # Calculate reward for speed
+            # we use quadratic punishment (not linear) bc we're not as confident with the optimal speed
+            # so, we do not punish small deviations from optimal speed
+            speed_diff = abs(speed - optimal_speed)
+            reward_speed = math.exp(-1.5 * speed_diff)
+            if self.debug and self.verbose:
+                self.logger.info('curvature %s, next_point %s, optimal_speed %s, speed %s', abs_curvature, next_points[0], optimal_speed, speed)
+            max_curvature, _ = self.max_curvature
+            if abs_curvature > max_curvature:
+                self.max_curvature = (abs_curvature, next_points[0])
+            return speed_diff, reward_speed
+        
+        def get_speed_reward4():
             stay_straight = select_straight2()
             if stay_straight and speed >= SPEED_THRESHOLD_FAST and abs(steering_angle) <= STEERING_THRESHOLD:
                 reward = 1
@@ -410,6 +482,7 @@ class Reward:
                 self.logger.info('stay_straight %s, speed %s', stay_straight, speed)
             return 0, reward
 
+        #################################################################
         def get_step_reward():
             # Reward if less steps
             REWARD_PER_STEP_FOR_FASTEST_TIME = 1
@@ -427,6 +500,7 @@ class Reward:
                 steps_reward = 0
             return projected_time, steps_reward
 
+        #################################################################
         def get_finish_reward():
             ## Incentive for finishing the lap in less steps ##
             STANDARD_TIME = 25  # seconds (time that is easily done by model)
@@ -436,6 +510,7 @@ class Reward:
                 finish_reward = 1e-3
             return finish_reward
         
+        #################################################################
         def get_straight_reward():
             stay_straight = select_straight()
             if stay_straight and abs(steering_angle) < STEERING_THRESHOLD:
@@ -445,6 +520,7 @@ class Reward:
             else:
                 return 0.5
 
+        #################################################################
         def get_progress_reward():
             fastest_complete_time = 12.4 # get from the lead board
             racing_line_length = 42.25 # customized to the racing line
@@ -488,7 +564,8 @@ class Reward:
                                  pi, self.intermediate_progress[pi], my_progress_score, self.intermediate_progress, progress, steps)
             return self.intermediate_progress[pi] + my_progress_score
 
-        def rescale_reward(reward, direction_reward, direction_weight, distance_reward, distance_weight, speed_reward, speed_weight, progress_reward, progress_weight):
+        #################################################################
+        def rescale_reward(reward, distance_reward, distance_weight, direction_reward, direction_weight, speed_reward, speed_weight, progress_reward, progress_weight):
             # reward += direction_reward * direction_weight \
             #     + distance_reward * distance_weight \
             #     + speed_reward * speed_weight \
@@ -504,6 +581,8 @@ class Reward:
 
         # Optimal racing line
         # Each row: [x,y,speed,timeFromPreviousPoint]
+        # Custom configs for each track
+        LOOK_FORWARD_STEPS = 6
         racing_track = [[6.81785, 2.89207, 4.0, 0.04971],
                         [6.65272, 2.91452, 4.0, 0.04166],
                         [6.50241, 2.93244, 4.0, 0.03784],
@@ -674,12 +753,21 @@ class Reward:
         ############### OPTIMAL X,Y,SPEED,TIME ################
 
         # Get closest indexes for racing line (and distances to all points on racing line)
-        closest_index, second_closest_index = closest_2_racing_points_index(
-            racing_track, [x, y])
+        closest_index, second_closest_index = closest_racing_points_index(racing_track, [x, y])
 
         # Get optimal [x, y, speed, time] for closest and second closest index
         optimals = racing_track[closest_index]
         optimals_second = racing_track[second_closest_index]
+
+        # for the use of calculation for the current racing line curvature
+        race_line_point1_index, race_line_point2_index, race_line_point3_index = get_closest_index(closest_index, second_closest_index)
+
+        race_line_point1_cords = racing_track[race_line_point1_index]
+        race_lint_point2_cords = racing_track[race_line_point2_index]
+        race_lint_point3_cords = racing_track[race_line_point3_index]
+        race_line_curvature = get_racing_line_curvrature(race_line_point1_cords, race_lint_point2_cords, race_lint_point3_cords)
+        if self.debug and self.verbose:
+            self.logger.info('racing line curvature %s, race_line_point1_index %s, race_line_point2_index %s, race_line_point3_index %s', race_line_curvature, race_line_point1_index, race_line_point2_index, race_line_point3_index)
 
         # Save first racingpoint of episode for later
         if steps == 2.0:
@@ -694,41 +782,41 @@ class Reward:
         ################ REWARD AND PUNISHMENT ################
 
         reward = 1  # basic reward to make sure there is penalty of offtrack
-        direction_enable = True
         distance_enable = True
+        direction_enable = True
         speed_enable = True
         progress_enable = False
         
-        direction_weight = 0
         distance_weight = 0
+        direction_weight = 0
         speed_weight = 0
         progress_weight = 0
 
         if not select_straight2():
             if self.debug and self.verbose:
                 self.logger.info('corner %s', closest_waypoints)
-            direction_weight = 1
             distance_weight = 1
+            direction_weight = 1
             speed_weight = 1
         else:
             if self.debug and self.verbose:
                 self.logger.info('straight %s', closest_waypoints)
-            direction_weight = 1
             distance_weight = 1
+            direction_weight = 1
             speed_weight = 1
-
-        if direction_enable:
-            direction_diff, direction_reward = get_direction_reward()
-        else:
-            direction_reward = 0
 
         if distance_enable:
             dist, distance_reward = get_distance_reward()
         else:
             direction_reward = 0
-        
+
+        if direction_enable:
+            direction_diff, direction_reward = get_direction_reward3()
+        else:
+            direction_reward = 0
+
         if speed_enable:
-            speed_diff, speed_reward = get_speed_reward2()
+            speed_diff, speed_reward = get_speed_reward()
         else:
             speed_reward = 0
 
@@ -740,18 +828,19 @@ class Reward:
         if is_offtrack:
             reward = 1e-3
         else:
-            reward = rescale_reward(reward, direction_reward, direction_weight, distance_reward, distance_weight, speed_reward, speed_weight, progress_reward, progress_weight)
+            reward = rescale_reward(reward, distance_reward, distance_weight, direction_reward, direction_weight, speed_reward, speed_weight, progress_reward, progress_weight)
         
         if reward > self.best_reward:
             self.best_reward = reward
         
         output_str = ''
         output_str += '{:3.5f}'.format(reward)
-        if direction_weight > 0:
-            output_str += '|{:d}x{:3.5f}'.format(direction_weight, direction_reward)
         
         if distance_weight > 0:
             output_str += '|{:d}x{:3.5f}'.format(distance_weight, distance_reward)
+
+        if direction_weight > 0:
+            output_str += '|{:d}x{:3.5f}'.format(direction_weight, direction_reward)
         
         if speed_weight > 0:
             output_str += '|{:d}x{:3.5f}'.format(speed_weight, speed_reward)
@@ -759,7 +848,7 @@ class Reward:
         if progress_weight > 0:
             output_str += '|{:d}x{:3.5f}'.format(progress_weight, progress_reward)
         
-        output_str += '|best_reward:{:3.5f}|max_curvature:{}|all_optimal_speed_set:{}'.format(self.best_reward, self.max_curvature, self.all_optimal_speed_set)
+        output_str += '|best_reward:{:3.5f}|max_curvature:{}|all_optimal_speed_set:{}\n-----------------------'.format(self.best_reward, self.max_curvature, self.all_optimal_speed_set)
 
         if self.debug:
             self.logger.info(output_str)
