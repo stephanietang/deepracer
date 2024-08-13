@@ -6,6 +6,8 @@ models_dir=./deepracer/models
 deepracer_on_the_spot_dir=./deepracer-on-the-spot
 backup_dir=./deepracer/backup/
 base=mariox-base
+echo "clean all models from $models_dir"
+rm -rf $models_dir/*
 echo "pull latest code"
 cd $deepracer_dir && git pull origin main
 cd ..
@@ -20,8 +22,8 @@ do
 	echo "# copy files from $models_dir/$i/* to $deepracer_on_the_spot_dir/custom-files folder"
 	cp -r $models_dir/$i/* $deepracer_on_the_spot_dir/custom-files/
 	cd $deepracer_on_the_spot_dir
-	sh ./create-spot-instance.sh $base $i $1
-	#sh ./create-standard-instance.sh $base $i $1
+	#sh ./create-spot-instance.sh $base $i $1
+	sh ./create-standard-instance.sh $base $i $1
 	cd ../
 	((j++))
 done

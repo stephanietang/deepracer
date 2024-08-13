@@ -60,6 +60,7 @@
 - aug11, aug09 and aug10 don't converge on the first 3-4 hours, the reward function is not good and action space is too high, then stop them and start new training, use a new reward function which only focus on the distance to the optimal line and lower action space model_metadata_19_linear_AS_1.2_4_copy.json, start training for 5h
 - aug12, use reward function as aug08 but use a different action space with faster speed model_metadata_19_linear_AS_1.5_4.json, train for 2h
 - aug13, use aug2024_arctic_open_ccw_13 but use a different action space with faster speed model_metadata_19_linear_AS_1.5_4.json, train for 3h, to compare with aug12, incremental training aug1301(1h), aug1302(2h)
+- aug14, use aug2024_arctic_open_ccw_13 and model_metadata_19_linear_AS_1.5_4.json, 3h, this reward function includes fine tuning the steering angle accountble for the curvature of the racing line
 
 
 ## Analysis on Reward Function
