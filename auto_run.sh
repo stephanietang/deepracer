@@ -15,9 +15,10 @@ do
 	sh ./create-spot-instance.sh $base $i $1
 	#./create-standard-instance.sh $base $i $1
 	if [ $j -gt 0 ]; then
-		echo "+ sleep for 5 mins"
+		echo "+ executing another [$j] tasks/task, before this, sleep for 5 mins"
 		sleep 600
 	fi
+	cd ../
 	((j++))
 done
 echo "Completed"
