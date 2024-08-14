@@ -58,9 +58,11 @@
 - aug09, use model_metadata_18_linear_AS_2_4.json as action space and reward_function, follow waypoints, consider the distance_reward, direction_reward and progress reward, trained for 90mins, incremental training aug0901(1h), aug0902(1h, ir=0.001), aug0903(4h, ir=0.001, on standard instance)
 - aug10, use model_metadata_18_linear_AS_2_4.json as action space and reward function look forward to future waypoints, change FUTURE_STEPS = 8 in inspired by completed lapse which cuts corner in aug0804, consider direction reward and progress reward, traied for 90mins, incremental training aug1001(4h, on standard instance)
 - aug11, aug09 and aug10 don't converge on the first 3-4 hours, the reward function is not good and action space is too high, then stop them and start new training, use a new reward function which only focus on the distance to the optimal line and lower action space model_metadata_19_linear_AS_1.2_4_copy.json, start training for 5h
-- aug12, use reward function as aug08 but use a different action space with faster speed model_metadata_19_linear_AS_1.5_4.json, train for 2h
+- aug12, use reward function as aug08 but use a different action space with faster speed model_metadata_19_linear_AS_1.5_4.json, train for 3h, incremental training 1201(3h, ir=0.0008, discount_factor=0.9, num_episodes_between_training=60), 1202(2h, ir=0.005, discount_factor=0.95, batch_size=256, num_episodes_between_training=40)
 - aug13, use aug2024_arctic_open_ccw_13 but use a different action space with faster speed model_metadata_19_linear_AS_1.5_4.json, train for 3h, to compare with aug12, incremental training aug1301(1h), aug1302(2h)
-- aug14, use aug2024_arctic_open_ccw_13 and model_metadata_19_linear_AS_1.5_4.json, 3h, this reward function includes fine tuning the steering angle accountble for the curvature of the racing line
+- aug14, use aug2024_arctic_open_ccw_14 and model_metadata_19_linear_AS_1.5_4.json, 3h, this reward function includes fine tuning the steering angle accountble for the curvature of the racing line, good reward function, first 3 hours, it can already finish the lap
+- aug15, use aug2024_arctic_open_ccw_14 and model_metadata_19_linear_AS_1.5_4.json, this reward function includes fine tuning the steering angle accountable for the angle between current racing line and ahead racing line, ir=0.0005, batch_size=256, 3h, already finish the lap for once. Incremental training aug1501(2h)
+
 
 
 ## Analysis on Reward Function
@@ -95,6 +97,7 @@ reward_function_angle|22s|relatively easy to train, fatest model so far|
         * https://medium.com/analytics-vidhya/aws-deepracer-looking-under-the-hood-for-design-of-the-reward-function-and-adjusting-e9dd3805ebbf
         * https://docs.aws.amazon.com/deepracer/latest/developerguide/deepracer-console-train-evaluate-models.html#deepracer-define-action-space-for-training
         * https://catalog.workshops.aws/deepracer-200l/en-US/04-improving-your-aws-deepracer-model/01-hyperparameters
+        * https://aws.amazon.com/cn/blogs/china/amazon-deepracer-model-training-guide-and-standard-hardware-configuration-process/
     - https://refactored.ai/microcourse/notebook?path=content%2FDeepRacer%2FAWS_DeepRacer_Reward_function_Additional_material.ipynb
     - https://www.linkedin.com/pulse/aws-deepracer-my-journey-from-17-seconds-95-dante-chen/
 - Run faster by using custom waypoints: https://www.youtube.com/watch?v=__NjsBY2TS0

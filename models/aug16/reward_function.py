@@ -335,7 +335,8 @@ class Reward:
             if index3 >= len(racing_track):
                 index3 = index3 - len(racing_track)
             
-            self.logger.info('## closest_index %s, second_closest_index %s, third index %s', index1, index2, index3)
+            if self.debug and self.verbose:
+                self.logger.info('## closest_index %s, second_closest_index %s, third index %s', index1, index2, index3)
             if index2 > index1:
                 return [index1, index2, index3]
             else:
@@ -563,39 +564,35 @@ class Reward:
             # Is exponential in the progress / steps. 
             # exponent increases with an increase in fraction of lap completed
             intermediate_progress_bonus = 0
-            best_bonus_score = 1
-            best_time = 12.4 # get it from lead board
-            best_steps = best_time * 15 + 1
-            best_progress_steps = 100 / best_steps
-            my_progress_steps = progress / steps
-            my_progress_score = my_progress_steps / best_progress_steps * best_bonus_score
+            my_progress_per_step = progress / steps
+            my_progress_score = my_progress_per_step**2 * 10
             pi = int(progress/10)
             MAX_PROGRESS_SCORE = 100**2
             if pi==10: # 100% track completion
                 if self.debug:
                     self.logger.info('completion the lapse!')
-                completion_bonus = 2 #bigger incentive bonus for completing the track
-                self.intermediate_progress[pi] = completion_bonus
-                intermediate_progress_bonus = completion_bonus
+                COMPLETE_BONUS = 20 #bigger incentive bonus for completing the track
+                self.intermediate_progress[pi] = COMPLETE_BONUS
+                intermediate_progress_bonus = COMPLETE_BONUS
             elif pi != 0 and self.intermediate_progress[pi] == 0:
                 intermediate_progress_bonus = progress ** 2 / MAX_PROGRESS_SCORE
                 self.intermediate_progress[pi] = intermediate_progress_bonus
 
             if self.debug and self.verbose:
-                self.logger.info('pi=%s, bonus %s, intermediate_progress %s, my_progress_score %s, progress %s, steps %s', 
-                                 pi, self.intermediate_progress[pi], my_progress_score, self.intermediate_progress, progress, steps)
+                self.logger.info('pi=%s, bonus %s, my_progress_score %s, intermediate_progress %s, progress %s, steps %s', 
+                                 pi, intermediate_progress_bonus, my_progress_score, self.intermediate_progress, progress, steps)
             return self.intermediate_progress[pi] + my_progress_score
 
         #################################################################
         def rescale_reward(reward, distance_reward, distance_weight, direction_reward, direction_weight, speed_reward, speed_weight, progress_reward, progress_weight):
-            # reward += direction_reward * direction_weight \
-            #     + distance_reward * distance_weight \
-            #     + speed_reward * speed_weight \
-            #     + progress_reward * progress_weight
-            
-            reward += (direction_reward * direction_weight \
+            reward += direction_reward * direction_weight \
                 + distance_reward * distance_weight \
-                + speed_reward * speed_weight)**2 + direction_reward * distance_reward * speed_reward
+                + speed_reward * speed_weight \
+                + progress_reward * progress_weight
+            
+            # reward += (direction_reward * direction_weight \
+            #     + distance_reward * distance_weight \
+            #     + speed_reward * speed_weight)**2 + direction_reward * distance_reward * speed_reward
             return reward
 
     
@@ -825,8 +822,8 @@ class Reward:
         reward = 1  # basic reward to make sure there is penalty of offtrack
         distance_enable = True
         direction_enable = True
-        speed_enable = True
-        progress_enable = False
+        speed_enable = False
+        progress_enable = True
         
         distance_weight = 0
         direction_weight = 0
@@ -839,12 +836,14 @@ class Reward:
             distance_weight = 1
             direction_weight = 1
             speed_weight = 1
+            progress_weight = 1
         else:
             if self.debug and self.verbose:
                 self.logger.info('straight %s', closest_waypoints)
             distance_weight = 1
             direction_weight = 1
             speed_weight = 1
+            progress_weight = 1
 
         if distance_enable:
             dist, distance_reward = get_distance_reward()

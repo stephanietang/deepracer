@@ -29,7 +29,7 @@ def delete_folder_from_s3(bucket_name, folder_prefix_list):
 # Example usage
 bucket_name = 'mariox-base-bucket-gffnrjtkqlw6'
 world_name = 'arctic_open_ccw'
-model_name = 'aug12'
+model_name = 'aug15'
 folder_prefix_list = ['training/{}/{}'.format(world_name, model_name), 
                       'upload/{}/{}'.format(world_name, model_name), 
                       'custom_files/{}/{}'.format(world_name, model_name)]
