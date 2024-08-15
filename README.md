@@ -62,6 +62,7 @@
 - aug13, use aug2024_arctic_open_ccw_13 but use a different action space with faster speed model_metadata_19_linear_AS_1.5_4.json, train for 3h, to compare with aug12, incremental training aug1301(1h), aug1302(2h)
 - aug14, use aug2024_arctic_open_ccw_14 and model_metadata_19_linear_AS_1.5_4.json, 3h, this reward function includes fine tuning the steering angle accountble for the curvature of the racing line, good reward function, first 3 hours, it can already finish the lap
 - aug15, use aug2024_arctic_open_ccw_14 and model_metadata_19_linear_AS_1.5_4.json, this reward function includes fine tuning the steering angle accountable for the angle between current racing line and ahead racing line, ir=0.0005, batch_size=256, 3h, already finish the lap for once. Incremental training aug1501(2h)
+- aug16, use aug2024_arctic_open_ccw_15 introduce progress reward and use model_metadata_19_linear_AS_1.5_4.json, batch_size=512, lr=0.0005, on top of aug1501
 
 
 
@@ -187,5 +188,5 @@ Command:
 
 ./pcl aws --sandbox-user --domain asiapac --sid E900259
 
-aws ec2 describe-instances --filters "Name=instance-state-name,Values=running" --query 'Reservations[].Instances[].[Tags[?Key==`Name`].Value, PublicIpAddress]'
+aws ec2 describe-instances --filters 'Name=instance-state-name,Values=running' --query 'Reservations[].Instances[].[Tags[?Key==`Name`].Value, PublicIpAddress]'
 
