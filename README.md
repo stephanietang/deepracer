@@ -61,8 +61,9 @@
 - aug12, use reward function as aug08 but use a different action space with faster speed model_metadata_19_linear_AS_1.5_4.json, train for 3h, incremental training 1201(3h, ir=0.0008, discount_factor=0.9, num_episodes_between_training=60), 1202(2h, ir=0.005, discount_factor=0.95, batch_size=256, num_episodes_between_training=40)
 - aug13, use aug2024_arctic_open_ccw_13 but use a different action space with faster speed model_metadata_19_linear_AS_1.5_4.json, train for 3h, to compare with aug12, incremental training aug1301(1h), aug1302(2h)
 - aug14, use aug2024_arctic_open_ccw_14 and model_metadata_19_linear_AS_1.5_4.json, 3h, this reward function includes fine tuning the steering angle accountble for the curvature of the racing line, good reward function, first 3 hours, it can already finish the lap
-- aug15, use aug2024_arctic_open_ccw_14 and model_metadata_19_linear_AS_1.5_4.json, this reward function includes fine tuning the steering angle accountable for the angle between current racing line and ahead racing line, ir=0.0005, batch_size=256, 3h, already finish the lap for once. Incremental training aug1501(2h)
-- aug16, use aug2024_arctic_open_ccw_15 introduce progress reward and use model_metadata_19_linear_AS_1.5_4.json, batch_size=512, lr=0.0005, on top of aug1501
+- aug15, use aug2024_arctic_open_ccw_15 and model_metadata_19_linear_AS_1.5_4.json, this reward function includes fine tuning the steering angle accountable for the angle between current racing line and ahead racing line, ir=0.0005, batch_size=256, 3h, already finish the lap for once. Incremental training aug1501(2h)
+- aug16, use aug2024_arctic_open_ccw_16 introduce progress reward and disable speed reward and use model_metadata_19_linear_AS_1.5_4.json, batch_size=512, lr=0.0005, on top of aug1501, aug1601(2h)
+- aug17, use aug2024_arctic_open_ccw_17, enable both progress reward and disable speed reward, model_metadata_19_linear_AS_1.5_4.json, batch_size=512, lr=0.0005, 3h, incremental training aug1701(2h, submitted one, no off-track, 18s), aug1702(2h, increase the action space to 1.8m/s), aug1703(2h, increase action space to 1.7m/s, on aug17), aug1703(2h, increase action space to 1.8m/s, on aug1702)
 
 
 

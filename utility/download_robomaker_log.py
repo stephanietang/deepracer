@@ -25,7 +25,7 @@ def download_logs_from_s3(bucket_name, prefix, local_directory):
                 print('downloaded file %s' % local_path)
 
 # Example usage
-model_name = 'aug1601'
+model_name = 'aug1703'
 local_log_folder = model_name[:5]
 world_name = 'arctic_open_ccw'
 bucket_name = 'mariox-base-bucket-gffnrjtkqlw6'
