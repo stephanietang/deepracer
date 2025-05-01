@@ -25,14 +25,11 @@ def download_logs_from_s3(bucket_name, prefix, local_directory):
                 print('downloaded file %s' % local_path)
 
 # Example usage
-model_name = 'aug1703'
-local_log_folder = model_name[:5]
-world_name = 'arctic_open_ccw'
-bucket_name = 'mariox-base-bucket-gffnrjtkqlw6'
+model_name = 's04'
+local_log_folder = model_name[:3]
+world_name = '2022_march_open_ccw'
+bucket_name = 'steph-base-bucket-dzikvcenvvzq'
 prefix = 'training/{}/{}/logs/'.format(world_name, model_name)  # Specify the prefix if your logs are in a specific folder
 local_directory = 'C:\\Users\\PC\\workspace\\deepracer\\deepracer-log-guru\\logs\\' + local_log_folder
 
 download_logs_from_s3(bucket_name, prefix, local_directory)
-
-# running model:
-# aug1601

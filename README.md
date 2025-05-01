@@ -63,7 +63,7 @@
 - aug14, use aug2024_arctic_open_ccw_14 and model_metadata_19_linear_AS_1.5_4.json, 3h, this reward function includes fine tuning the steering angle accountble for the curvature of the racing line, good reward function, first 3 hours, it can already finish the lap
 - aug15, use aug2024_arctic_open_ccw_15 and model_metadata_19_linear_AS_1.5_4.json, this reward function includes fine tuning the steering angle accountable for the angle between current racing line and ahead racing line, ir=0.0005, batch_size=256, 3h, already finish the lap for once. Incremental training aug1501(2h)
 - aug16, use aug2024_arctic_open_ccw_16 introduce progress reward and disable speed reward and use model_metadata_19_linear_AS_1.5_4.json, batch_size=512, lr=0.0005, on top of aug1501, aug1601(2h)
-- aug17, use aug2024_arctic_open_ccw_17, enable both progress reward and disable speed reward, model_metadata_19_linear_AS_1.5_4.json, batch_size=512, lr=0.0005, 3h, incremental training aug1701(2h, submitted one, no off-track, 18s), aug1702(2h, increase the action space to 1.8m/s), aug1703(2h, increase action space to 1.7m/s, on aug17), aug1703(2h, increase action space to 1.8m/s, on aug1702)
+- aug17, use aug2024_arctic_open_ccw_17, enable both progress reward and disable speed reward, model_metadata_19_linear_AS_1.5_4.json, batch_size=512, lr=0.0005, 3h, incremental training aug1701(2h, submitted one, no off-track, 18s), aug1702(2h, increase the action space to 1.8m/s), aug1703(2h, increase action space to 1.7m/s, on aug17), aug1703(2h, increase action space to 1.8m/s, on aug1702), aug1705, aug1706(on aug1705, 2h, ir=0.0003, increase speed), aug1707(on aug1706, 2h, ir=0.0002, only keep ahead 3m/s and 4m/s, remove other speed when steering angle is 0), aug1708(on aug1708, 3h, ir=0.0002, increase min speed to 1.9m/s), aug1709(on aug1708, ir=0.0002, increase min speed to 2.0m/s)
 
 
 
@@ -76,7 +76,7 @@
 |reward_function_steps_progress||easy to train|
 reward_function_angle|22s|relatively easy to train, fatest model so far|
 |reward_function_progress_velocity||hard to train|
-|reward_function_optimal_trace5||hardest to train|
+|reward_function_optimal_trace5||hardest to train when there are sharp turns|
 
 ## How to Run the scripts
 - Change the models config under ./models
@@ -187,7 +187,8 @@ to ensure that you pick up the correct session token when running the code
 
 Command:
 
-./pcl aws --sandbox-user --domain asiapac --sid E900259
+./pcl aws --sandbox-user --domain asiapac --sid E900259 --switch-role
 
 aws ec2 describe-instances --filters 'Name=instance-state-name,Values=running' --query 'Reservations[].Instances[].[Tags[?Key==`Name`].Value, PublicIpAddress]'
 
+54.158.16.30:8100/deepracer-menu.html
